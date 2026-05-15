@@ -151,13 +151,13 @@ export default function WorkoutCalendar({
                     <span
                       key={cat.id}
                       title={cat.label}
-                      className={`w-1 h-1 rounded-full ${todayCell ? "bg-primary-foreground" : cat.dotColor}`}
+                      className={`w-2 h-2 rounded-full ring-1 ring-background ${cat.dotColor}`}
                     />
                   ))}
                 </div>
               ) : hasWorkout ? (
                 <span
-                  className={`w-1 h-1 rounded-full mt-0.5 ${todayCell ? "bg-primary-foreground" : "bg-muted-foreground"}`}
+                  className={`w-2 h-2 rounded-full mt-0.5 ring-1 ring-background ${todayCell ? "bg-primary-foreground" : "bg-muted-foreground"}`}
                 />
               ) : null}
             </Link>

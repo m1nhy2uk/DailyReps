@@ -159,6 +159,30 @@ export async function searchExerciseNames(query: string): Promise<string[]> {
   }
 }
 
+/** 여러 종목 한 번에 추가 */
+export async function createMultipleEntries(names: string[], date: string): Promise<WorkoutActionState> {
+  for (const name of names) {
+    const err = validateExerciseName(name);
+    if (err) return { error: err };
+  }
+  try {
+    const { supabase, userId } = await requireUser();
+    const { data: sessionId, error: sessionErr } = await repo.getOrCreateSession(supabase, userId, date);
+    if (sessionErr || !sessionId) return { error: sessionErr ?? "세션 생성 실패" };
+
+    let nextIndex = (await repo.getMaxOrderIndex(supabase, sessionId)) + 1;
+    for (const name of names) {
+      const { error } = await repo.insertEntry(supabase, sessionId, userId, name.trim(), nextIndex);
+      if (error) return { error };
+      nextIndex++;
+    }
+  } catch {
+    return { error: "종목 추가 중 오류가 발생했습니다" };
+  }
+  revalidatePath(`/workout/${date}`);
+  return {};
+}
+
 /** 세트 삭제 (소프트) */
 export async function deleteSet(setId: string, date: string): Promise<WorkoutActionState> {
   try {

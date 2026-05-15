@@ -25,6 +25,13 @@ const KEYWORD_RULES: [RegExp, string][] = [
   [/러닝|달리기|자전거|사이클|수영|줄넘기|계단|유산소|걷기|조깅|트레드밀|일립티컬/,           "cardio"],
 ];
 
+export function detectPrimaryCategory(name: string): ExerciseCategory | null {
+  for (const [pattern, categoryId] of KEYWORD_RULES) {
+    if (pattern.test(name)) return CATEGORIES[categoryId];
+  }
+  return null;
+}
+
 export function detectCategories(exerciseNames: string[]): ExerciseCategory[] {
   const found = new Set<string>();
   for (const name of exerciseNames) {
@@ -39,3 +46,13 @@ export function detectCategories(exerciseNames: string[]): ExerciseCategory[] {
 }
 
 export const ALL_CATEGORIES = Object.values(CATEGORIES);
+
+export const EXERCISES_BY_CATEGORY: { category: ExerciseCategory; exercises: string[] }[] = [
+  { category: CATEGORIES.chest,    exercises: ["벤치프레스", "인클라인 벤치프레스", "딥스", "덤벨 플라이", "푸시업", "케이블 크로스오버"] },
+  { category: CATEGORIES.shoulder, exercises: ["숄더 프레스", "밀리터리 프레스", "레터럴 레이즈", "프론트 레이즈", "페이스 풀", "업라이트 로우"] },
+  { category: CATEGORIES.back,     exercises: ["데드리프트", "풀업", "랫풀다운", "바벨 로우", "덤벨 로우", "시티드 로우"] },
+  { category: CATEGORIES.legs,     exercises: ["스쿼트", "런지", "레그 프레스", "레그 컬", "힙 쓰러스트", "카프 레이즈"] },
+  { category: CATEGORIES.arm,      exercises: ["바이셉 컬", "해머 컬", "트라이셉 익스텐션", "스컬 크러셔", "케이블 컬"] },
+  { category: CATEGORIES.core,     exercises: ["크런치", "플랭크", "레그 레이즈", "싯업", "러시안 트위스트"] },
+  { category: CATEGORIES.cardio,   exercises: ["러닝", "자전거", "줄넘기", "계단 오르기", "트레드밀"] },
+];
