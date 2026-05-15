@@ -438,6 +438,73 @@ export async function getRecentSessionsWithEntries(
   return { data: sessions, error: null };
 }
 
+export type WorkoutStats = {
+  totalSessions: number;
+  thisMonthSessions: number;
+  currentStreak: number;
+  totalSets: number;
+  topExercises: { name: string; count: number }[];
+};
+
+/** 프로필 통계 */
+export async function getWorkoutStats(
+  supabase: SB,
+  userId: string
+): Promise<WorkoutStats> {
+  const now = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+  const thisMonthStart = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
+
+  const [sessionsRes, setsRes, exercisesRes] = await Promise.all([
+    supabase
+      .from("workout_sessions")
+      .select("session_date")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("session_date", { ascending: false }),
+    supabase
+      .from("workout_sets")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("deleted_at", null),
+    supabase
+      .from("workout_entries")
+      .select("exercise_name")
+      .eq("user_id", userId)
+      .is("deleted_at", null),
+  ]);
+
+  const dates = (sessionsRes.data ?? []).map((s) => s.session_date);
+  const totalSessions = dates.length;
+  const thisMonthSessions = dates.filter((d) => d >= thisMonthStart).length;
+  const totalSets = setsRes.count ?? 0;
+
+  // 연속 운동 일수
+  const todayStr = now.toISOString().split("T")[0];
+  const dateSet = new Set(dates);
+  let currentStreak = 0;
+  const cursor = new Date(now);
+  // 오늘 운동 안 했으면 어제부터 체크
+  if (!dateSet.has(todayStr)) cursor.setUTCDate(cursor.getUTCDate() - 1);
+  while (true) {
+    const d = cursor.toISOString().split("T")[0];
+    if (!dateSet.has(d)) break;
+    currentStreak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+
+  // 많이 한 종목 Top 3
+  const nameCount = new Map<string, number>();
+  for (const row of exercisesRes.data ?? []) {
+    nameCount.set(row.exercise_name, (nameCount.get(row.exercise_name) ?? 0) + 1);
+  }
+  const topExercises = [...nameCount.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([name, count]) => ({ name, count }));
+
+  return { totalSessions, thisMonthSessions, currentStreak, totalSets, topExercises };
+}
+
 /** 전체 운동 세션 수 */
 export async function getTotalSessionCount(
   supabase: SB,

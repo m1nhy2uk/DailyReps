@@ -84,7 +84,7 @@ export async function updateProfileAction(
 
   if (result.error) return { error: result.error };
 
-  revalidatePath("/profile");
+  revalidatePath("/profile", "layout");
   return { success: true };
 }
 
