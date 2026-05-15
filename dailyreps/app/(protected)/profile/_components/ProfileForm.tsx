@@ -89,10 +89,68 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
         <p className="text-xs text-muted-foreground">2~20자 · 영문/한글/숫자/언더스코어</p>
       </div>
 
+      {/* 3대 기록 */}
+      <div className="flex flex-col gap-3">
+        <p className="text-sm font-semibold">3대 기록 (kg)</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="bench_press_kg" className="text-xs text-muted-foreground">벤치프레스</Label>
+            <Input
+              id="bench_press_kg"
+              name="bench_press_kg"
+              type="number"
+              min={0}
+              max={999.9}
+              step={0.1}
+              defaultValue={profile.bench_press_kg ?? ""}
+              disabled={pending}
+              placeholder="0"
+              className="text-center"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="squat_kg" className="text-xs text-muted-foreground">스쿼트</Label>
+            <Input
+              id="squat_kg"
+              name="squat_kg"
+              type="number"
+              min={0}
+              max={999.9}
+              step={0.1}
+              defaultValue={profile.squat_kg ?? ""}
+              disabled={pending}
+              placeholder="0"
+              className="text-center"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="deadlift_kg" className="text-xs text-muted-foreground">데드리프트</Label>
+            <Input
+              id="deadlift_kg"
+              name="deadlift_kg"
+              type="number"
+              min={0}
+              max={999.9}
+              step={0.1}
+              defaultValue={profile.deadlift_kg ?? ""}
+              disabled={pending}
+              placeholder="0"
+              className="text-center"
+            />
+          </div>
+        </div>
+        {(profile.bench_press_kg || profile.squat_kg || profile.deadlift_kg) && (
+          <p className="text-xs text-muted-foreground text-right">
+            합계{" "}
+            <span className="font-semibold text-foreground">
+              {((profile.bench_press_kg ?? 0) + (profile.squat_kg ?? 0) + (profile.deadlift_kg ?? 0)).toFixed(1)} kg
+            </span>
+          </p>
+        )}
+      </div>
+
       {state.error && (
-        <p role="alert" className="text-sm text-destructive">
-          {state.error}
-        </p>
+        <p role="alert" className="text-sm text-destructive">{state.error}</p>
       )}
       {state.success && (
         <p role="status" className="text-sm text-green-600 dark:text-green-400">

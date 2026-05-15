@@ -9,7 +9,7 @@ export async function getProfile(client: SB, userId: string): Promise<ServiceRes
   try {
     const { data, error } = await client
       .from("profiles")
-      .select("id, nickname, avatar_url, created_at, updated_at")
+      .select("id, nickname, avatar_url, bench_press_kg, squat_kg, deadlift_kg, created_at, updated_at")
       .eq("id", userId)
       .maybeSingle(); // 행이 없으면 null 반환 (throw 안 함)
 
@@ -23,14 +23,20 @@ export async function getProfile(client: SB, userId: string): Promise<ServiceRes
 export async function updateProfile(
   client: SB,
   userId: string,
-  input: { nickname?: string; avatar_url?: string | null }
+  input: {
+    nickname?: string;
+    avatar_url?: string | null;
+    bench_press_kg?: number | null;
+    squat_kg?: number | null;
+    deadlift_kg?: number | null;
+  }
 ): Promise<ServiceResult<Profile>> {
   try {
     const { data, error } = await client
       .from("profiles")
       .update(input)
       .eq("id", userId)
-      .select("id, nickname, avatar_url, created_at, updated_at")
+      .select("id, nickname, avatar_url, bench_press_kg, squat_kg, deadlift_kg, created_at, updated_at")
       .single();
 
     if (error) throw error;

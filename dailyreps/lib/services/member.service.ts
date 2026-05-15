@@ -36,6 +36,16 @@ export async function updateProfileAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "로그인이 필요합니다" };
 
+  // 3대 기록
+  const parseKg = (v: FormDataEntryValue | null) => {
+    if (!v || v === "") return null;
+    const n = parseFloat(v as string);
+    return isNaN(n) || n < 0 || n > 999.9 ? null : n;
+  };
+  const bench_press_kg = parseKg(formData.get("bench_press_kg"));
+  const squat_kg = parseKg(formData.get("squat_kg"));
+  const deadlift_kg = parseKg(formData.get("deadlift_kg"));
+
   const avatarFile = formData.get("avatar") as File | null;
   let avatar_url: string | undefined;
 
@@ -63,7 +73,13 @@ export async function updateProfileAction(
     avatar_url = publicUrl;
   }
 
-  const input = avatar_url !== undefined ? { nickname, avatar_url } : { nickname };
+  const input = {
+    nickname,
+    bench_press_kg,
+    squat_kg,
+    deadlift_kg,
+    ...(avatar_url !== undefined ? { avatar_url } : {}),
+  };
   const result = await updateProfile(supabase, user.id, input);
 
   if (result.error) return { error: result.error };
@@ -89,7 +105,7 @@ export async function getOrCreateProfile(): Promise<Profile | null> {
   const { data: created, error } = await adminClient
     .from("profiles")
     .insert({ id: user.id, nickname })
-    .select("id, nickname, avatar_url, created_at, updated_at")
+    .select("id, nickname, avatar_url, bench_press_kg, squat_kg, deadlift_kg, created_at, updated_at")
     .single();
 
   if (error || !created) return null;

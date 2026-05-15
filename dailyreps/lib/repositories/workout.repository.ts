@@ -438,6 +438,19 @@ export async function getRecentSessionsWithEntries(
   return { data: sessions, error: null };
 }
 
+/** 전체 운동 세션 수 */
+export async function getTotalSessionCount(
+  supabase: SB,
+  userId: string
+): Promise<number> {
+  const { count } = await supabase
+    .from("workout_sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .is("deleted_at", null);
+  return count ?? 0;
+}
+
 export async function getMaxOrderIndex(
   supabase: SB,
   sessionId: string
