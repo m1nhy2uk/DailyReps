@@ -18,38 +18,27 @@
 - 반응형 디자인 (모바일 하단 탭 바)
 - 다크모드 지원
 
-## 로컬 실행
+## 에이전트 활용 방식
 
-1. 패키지 설치
-
-```bash
-cd dailyreps
-npm install
-```
-
-2. 환경 변수 설정
-
-```bash
-cp .env.local.example .env.local
-```
-
-`.env.local`에 Supabase 프로젝트 URL과 anon key를 입력합니다.
-
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-```
-
-3. 개발 서버 실행
-
-```bash
-npm run dev
-```
-
-http://localhost:3000 에서 확인합니다.
+| **단계**      | **방식**                                            |
+| ------------- | --------------------------------------------------- |
+| **문서 작성** | CLAUDE.md 기반으로 docs 폴더 구조 및 TODO 자동 생성 |
+| **기능 개발** | TODO-READY.md 작업 단위로 하나씩 지시               |
+| **코드 검토** | 생성된 코드 직접 읽고 이해 후 다음 작업 진행        |
 
 ## 프로젝트 구조
+
+**데이터 모델 (3계층)**
+
+| **테이블**           | **역할**              | **주요 컬럼**                            |
+| -------------------- | --------------------- | ---------------------------------------- |
+| **workout_sessions** | 운동 세션 (날짜 단위) | id, user_id, date, note                  |
+| **workout_entries**  | 세션 내 운동 종목     | id, session_id, exercise_name            |
+| **workout_sets**     | 종목별 세트 기록      | id, entry_id, weight_kg, reps, set_order |
+
+- **Member 도메인** → 회원가입, 로그인, 프로필
+- **Workout 도메인** → 운동 세션, 종목, 세트 기록
+- **Common 도메인** → 공통으로 쓰이는 것들 (DB 컬럼 규칙, 소프트 삭제 등)
 
 ```
 dailyreps/
