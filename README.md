@@ -124,12 +124,12 @@ Supabase Auth (이메일/패스워드)를 사용합니다. 회원가입 시 `han
 
 ## 테이블 구조 (3계층)
 
-| 테이블 | 역할 | 주요 컬럼 |
-|--------|------|-----------|
-| `profiles` | 사용자 프로필 | id, nickname, avatar_url, bench_press_kg, squat_kg, deadlift_kg |
-| `workout_sessions` | 운동 세션 (날짜 단위, user당 날짜별 1개) | id, user_id, session_date |
-| `workout_entries` | 세션 내 운동 종목 | id, session_id, exercise_name, order_index |
-| `workout_sets` | 종목별 세트 기록 | id, entry_id, weight_kg, reps, set_number |
+| 테이블             | 역할                                     | 주요 컬럼                                                       |
+| ------------------ | ---------------------------------------- | --------------------------------------------------------------- |
+| `profiles`         | 사용자 프로필                            | id, nickname, avatar_url, bench_press_kg, squat_kg, deadlift_kg |
+| `workout_sessions` | 운동 세션 (날짜 단위, user당 날짜별 1개) | id, user_id, session_date                                       |
+| `workout_entries`  | 세션 내 운동 종목                        | id, session_id, exercise_name, order_index                      |
+| `workout_sets`     | 종목별 세트 기록                         | id, entry_id, weight_kg, reps, set_number                       |
 
 스키마 SQL: `docs/001_initial_schema.sql` 을 Supabase SQL Editor에서 실행합니다.
 
@@ -175,14 +175,14 @@ docs/
 
 ## 어떤 작업에 활용했는지
 
-| 작업 | 내용 |
-|------|------|
-| 프로젝트 초기화 | Next.js 16 + Supabase 클라이언트 3종 세팅 |
-| DB 스키마 설계 | 3계층 데이터 모델 + RLS 정책 SQL 생성 |
-| 기능 구현 | 운동 기록 CRUD, 자동완성, 달력, 프로필 전 기능 |
-| UI 컴포넌트 교체 | 커스텀 컴포넌트 → ShadCN UI 마이그레이션 |
-| 반응형 디자인 | 모바일 탭 바, 터치 타겟 개선 |
-| 버그 수정 | Next.js 16 breaking changes 대응 |
+| 작업             | 내용                                           |
+| ---------------- | ---------------------------------------------- |
+| 프로젝트 초기화  | Next.js 16 + Supabase 클라이언트 3종 세팅      |
+| DB 스키마 설계   | 3계층 데이터 모델 + RLS 정책 SQL 생성          |
+| 기능 구현        | 운동 기록 CRUD, 자동완성, 달력, 프로필 전 기능 |
+| UI 컴포넌트 교체 | 커스텀 컴포넌트 → ShadCN UI 마이그레이션       |
+| 반응형 디자인    | 모바일 탭 바, 터치 타겟 개선                   |
+| 버그 수정        | Next.js 16 breaking changes 대응               |
 
 ## 프롬프트 전략
 
@@ -218,7 +218,11 @@ export default function Page({ params }: { params: { date: string } }) {
 }
 
 // 변경 후
-export default async function Page({ params }: { params: Promise<{ date: string }> }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ date: string }>;
+}) {
   const { date } = await params;
 }
 ```
@@ -242,7 +246,9 @@ Next.js 16 ESLint 규칙이 `useEffect` 내 파생 값 갱신을 금지.
 ```ts
 // 변경 전 — useEffect + setState
 const [showDropdown, setShowDropdown] = useState(false);
-useEffect(() => { setShowDropdown(suggestions.length > 0 && isFocused); }, [suggestions, isFocused]);
+useEffect(() => {
+  setShowDropdown(suggestions.length > 0 && isFocused);
+}, [suggestions, isFocused]);
 
 // 변경 후 — 파생 값
 const showDropdown = suggestions.length > 0 && isFocused;
