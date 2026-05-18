@@ -21,6 +21,40 @@
 - 반응형 디자인 (모바일 하단 탭 바)
 - 다크모드 지원
 
+### **화면 구성**
+
+**로그인**
+
+이메일 / 비밀번호 입력
+
+**회원가입**
+
+닉네임 + 이메일 + 비밀번호
+
+**대시보드**
+
+최근 운동 기록 요약
+
+날짜 밑 운동카테고리 표시
+
+<img width="1433" height="1174" alt="image" src="https://github.com/user-attachments/assets/c0b9da8b-87bb-46c7-b44f-69488ec38ae1" />
+
+
+**날짜별 기록**
+
+운동 세션 + 종목 + 세트
+
+<img width="1438" height="1148" alt="image" src="https://github.com/user-attachments/assets/fcff5234-98dc-4cc6-b7fe-1df90f5758b4" />
+<img width="1417" height="1208" alt="image" src="https://github.com/user-attachments/assets/f3118385-53b4-4b59-8f6b-1c2576d3d037" />
+
+
+**기록 입력**
+
+종목 추가 / 세트 입력 폼
+프로필 페이지
+<img width="931" height="873" alt="image" src="https://github.com/user-attachments/assets/eaff7417-df27-4270-95c8-b06ae2765976" />
+
+
 ## 에이전트 활용 방식
 
 | **단계**      | **방식**                                            |
