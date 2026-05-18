@@ -3,6 +3,30 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import * as repo from "@/lib/repositories/workout.repository";
+import { getProfile, updateProfile } from "@/lib/repositories/member.repository";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database.types";
+
+type SB = SupabaseClient<Database>;
+
+const BIG3_FIELD: Record<string, "bench_press_kg" | "squat_kg" | "deadlift_kg"> = {
+  "벤치프레스": "bench_press_kg",
+  "benchpress": "bench_press_kg",
+  "스쿼트": "squat_kg",
+  "squat": "squat_kg",
+  "데드리프트": "deadlift_kg",
+  "deadlift": "deadlift_kg",
+};
+
+async function maybeUpdatePR(supabase: SB, userId: string, exerciseName: string, weightKg: number) {
+  const field = BIG3_FIELD[exerciseName.replace(/\s+/g, "").toLowerCase()];
+  if (!field) return;
+  const { data: profile } = await getProfile(supabase, userId);
+  if (!profile) return;
+  if ((profile[field] ?? 0) < weightKg) {
+    await updateProfile(supabase, userId, { [field]: weightKg });
+  }
+}
 
 export type WorkoutActionState = { error?: string };
 
@@ -116,6 +140,8 @@ export async function addSet(
     const { supabase, userId } = await requireUser();
     const { error } = await repo.insertSet(supabase, entryId, userId, setNumber, weightKg, reps);
     if (error) return { error };
+    const exerciseName = await repo.getExerciseNameByEntryId(supabase, entryId);
+    if (exerciseName) await maybeUpdatePR(supabase, userId, exerciseName, weightKg);
   } catch {
     return { error: "세트 추가 중 오류가 발생했습니다" };
   }
@@ -137,9 +163,11 @@ export async function updateSet(
   if (repsErr) return { error: repsErr };
 
   try {
-    const { supabase } = await requireUser();
+    const { supabase, userId } = await requireUser();
     const { error } = await repo.patchSet(supabase, setId, weightKg, reps);
     if (error) return { error };
+    const exerciseName = await repo.getExerciseNameBySetId(supabase, setId);
+    if (exerciseName) await maybeUpdatePR(supabase, userId, exerciseName, weightKg);
   } catch {
     return { error: "세트 수정 중 오류가 발생했습니다" };
   }

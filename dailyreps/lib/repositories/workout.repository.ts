@@ -411,6 +411,7 @@ export async function getRecentSessionsWithEntries(
     )
     .eq("user_id", userId)
     .is("deleted_at", null)
+    .lte("session_date", new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split("T")[0])
     .order("session_date", { ascending: false })
     .limit(limit);
 
@@ -436,6 +437,25 @@ export async function getRecentSessionsWithEntries(
   });
 
   return { data: sessions, error: null };
+}
+
+export async function getExerciseNameByEntryId(supabase: SB, entryId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("workout_entries")
+    .select("exercise_name")
+    .eq("id", entryId)
+    .single();
+  return data?.exercise_name ?? null;
+}
+
+export async function getExerciseNameBySetId(supabase: SB, setId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("workout_sets")
+    .select("entry_id, workout_entries(exercise_name)")
+    .eq("id", setId)
+    .single();
+  const entry = data?.workout_entries as { exercise_name: string } | null;
+  return entry?.exercise_name ?? null;
 }
 
 export type WorkoutStats = {
