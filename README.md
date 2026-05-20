@@ -124,7 +124,8 @@ npm run dev
 
 ## Authentication
 
-Supabase Auth (이메일/패스워드)를 사용합니다. 회원가입 시 `handle_new_user` 트리거가 자동으로 `profiles` 테이블에 레코드를 생성합니다.
+Supabase Auth (이메일/패스워드)를 사용합니다. 회원가입 시 `handle_new_user` 트리거가 자동으로 `profiles` 테이블에
+레코드를 생성합니다.
 
 ## 테이블 구조 (3계층)
 
@@ -272,6 +273,7 @@ const showDropdown = suggestions.length > 0 && isFocused;
 - 운동 볼륨(무게 × 세트 수) 추이 차트 추가
 - 종목별 최고 기록(PR) 트래킹
 - PWA 지원으로 홈 화면 설치
+- 과거 기록했던 세트 불러오기
 
 ## 새롭게 배운 점
 
